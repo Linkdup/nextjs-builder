@@ -43,77 +43,90 @@ var nextjs_toolkit_1 = require("@silverstripe/nextjs-toolkit");
 var queries_1 = require("../build/queries");
 var createGetQueryForType_1 = __importDefault(require("../build/createGetQueryForType"));
 var createClient_1 = __importDefault(require("../graphql/createClient"));
-var getStaticProps = function (project) { return function (context) { return __awaiter(void 0, void 0, void 0, function () {
-    var getQueryForType, api, _a, getPropsManifest, typeAncestry, availableTemplates, page, url, templates, typeResolutionResult, data, result, type, ancestors, stage, queryStr, _b, propsKey, propsFunc, _c, componentProps;
-    var _d, _e, _f, _g, _h;
-    return __generator(this, function (_j) {
-        switch (_j.label) {
-            case 0:
-                getQueryForType = (0, createGetQueryForType_1.default)(project);
-                api = (0, createClient_1.default)(project.projectConfig);
-                _a = project.cacheManifest, getPropsManifest = _a.getPropsManifest, typeAncestry = _a.typeAncestry, availableTemplates = _a.availableTemplates;
-                page = (_e = (_d = context === null || context === void 0 ? void 0 : context.params) === null || _d === void 0 ? void 0 : _d.page) !== null && _e !== void 0 ? _e : [];
-                if (Array.isArray(page)) {
-                    url = page.join("/");
-                }
-                else {
-                    url = page;
-                }
-                url = (0, nextjs_toolkit_1.linkify)(url);
-                if (url.match(/\.[^\/]+$/)) {
-                    console.log("Not found:", url);
+var getStaticProps = function (project) {
+    return function (context) { return __awaiter(void 0, void 0, void 0, function () {
+        var getQueryForType, api, _a, getPropsManifest, typeAncestry, availableTemplates, page, url, templates, result, typeResolutionResult, _b, data, type, ancestors, stage, queryStr, _c, propsKey, propsFunc, _d, componentProps;
+        var _e, _f, _g, _h, _j;
+        return __generator(this, function (_k) {
+            switch (_k.label) {
+                case 0:
+                    getQueryForType = (0, createGetQueryForType_1.default)(project);
+                    api = (0, createClient_1.default)(project.projectConfig);
+                    _a = project.cacheManifest, getPropsManifest = _a.getPropsManifest, typeAncestry = _a.typeAncestry, availableTemplates = _a.availableTemplates;
+                    page = (_f = (_e = context === null || context === void 0 ? void 0 : context.params) === null || _e === void 0 ? void 0 : _e.page) !== null && _f !== void 0 ? _f : [];
+                    if (Array.isArray(page)) {
+                        url = page.join("/");
+                    }
+                    else {
+                        url = page;
+                    }
+                    url = (0, nextjs_toolkit_1.linkify)(url);
+                    if (url.match(/\.[^\/]+$/)) {
+                        console.log("Not found:", url);
+                        return [2 /*return*/, {
+                                notFound: true,
+                            }];
+                    }
+                    if (!availableTemplates) {
+                        throw new Error("No available templates found");
+                    }
+                    templates = Object.keys(availableTemplates);
+                    result = "";
+                    _k.label = 1;
+                case 1:
+                    _k.trys.push([1, 3, , 4]);
+                    return [4 /*yield*/, api.query(queries_1.TYPE_RESOLUTION_QUERY, { links: [url] })];
+                case 2:
+                    typeResolutionResult = _k.sent();
+                    if (!typeResolutionResult ||
+                        typeResolutionResult.typesForLinks.length === 0) {
+                        return [2 /*return*/, {
+                                notFound: true,
+                            }];
+                    }
+                    result = typeResolutionResult.typesForLinks[0];
+                    return [3 /*break*/, 4];
+                case 3:
+                    _b = _k.sent();
                     return [2 /*return*/, {
                             notFound: true,
                         }];
-                }
-                if (!availableTemplates) {
-                    throw new Error("No available templates found");
-                }
-                templates = Object.keys(availableTemplates);
-                return [4 /*yield*/, api.query(queries_1.TYPE_RESOLUTION_QUERY, { links: [url] })];
-            case 1:
-                typeResolutionResult = _j.sent();
-                if (!typeResolutionResult ||
-                    typeResolutionResult.typesForLinks.length === 0) {
-                    return [2 /*return*/, {
-                            notFound: true,
-                        }];
-                }
-                data = {
-                    query: null,
-                    extraProps: null,
-                };
-                result = typeResolutionResult.typesForLinks[0];
-                type = result.type;
-                ancestors = (_f = typeAncestry[type]) !== null && _f !== void 0 ? _f : [];
-                stage = context.preview ? "DRAFT" : "LIVE";
-                queryStr = getQueryForType(type);
-                if (!queryStr) return [3 /*break*/, 3];
-                _b = data;
-                return [4 /*yield*/, api.query(queryStr, { link: url, stage: stage })];
-            case 2:
-                _b.query = (_g = (_j.sent())) !== null && _g !== void 0 ? _g : null;
-                _j.label = 3;
-            case 3:
-                propsKey = (0, nextjs_toolkit_1.resolveAncestry)(type, ancestors, Object.keys(getPropsManifest));
-                propsFunc = propsKey ? (_h = getPropsManifest[propsKey]) !== null && _h !== void 0 ? _h : null : null;
-                if (!propsFunc) return [3 /*break*/, 5];
-                _c = data;
-                return [4 /*yield*/, propsFunc(data.query)];
-            case 4:
-                _c.extraProps = _j.sent();
-                _j.label = 5;
-            case 5:
-                componentProps = {
-                    props: {
-                        data: data,
-                        type: type,
-                        templates: templates,
-                    },
-                };
-                return [2 /*return*/, componentProps];
-        }
-    });
-}); }; };
+                case 4:
+                    data = {
+                        query: null,
+                        extraProps: null,
+                    };
+                    type = result.type;
+                    ancestors = (_g = typeAncestry[type]) !== null && _g !== void 0 ? _g : [];
+                    stage = context.preview ? "DRAFT" : "LIVE";
+                    queryStr = getQueryForType(type);
+                    if (!queryStr) return [3 /*break*/, 6];
+                    _c = data;
+                    return [4 /*yield*/, api.query(queryStr, { link: url, stage: stage })];
+                case 5:
+                    _c.query = (_h = (_k.sent())) !== null && _h !== void 0 ? _h : null;
+                    _k.label = 6;
+                case 6:
+                    propsKey = (0, nextjs_toolkit_1.resolveAncestry)(type, ancestors, Object.keys(getPropsManifest));
+                    propsFunc = propsKey ? (_j = getPropsManifest[propsKey]) !== null && _j !== void 0 ? _j : null : null;
+                    if (!propsFunc) return [3 /*break*/, 8];
+                    _d = data;
+                    return [4 /*yield*/, propsFunc(data.query)];
+                case 7:
+                    _d.extraProps = _k.sent();
+                    _k.label = 8;
+                case 8:
+                    componentProps = {
+                        props: {
+                            data: data,
+                            type: type,
+                            templates: templates,
+                        },
+                    };
+                    return [2 /*return*/, componentProps];
+            }
+        });
+    }); };
+};
 exports.default = getStaticProps;
 //# sourceMappingURL=getStaticProps.js.map
